@@ -17,10 +17,13 @@ fix_commit = "af2969dec58ca89150b84b5d57edcf63d4ce1302"
 file_name = "CordovaWebViewImpl.java" 
 
 print("Part 3 info:")
+print("git diff for the fix commit and the commit before the fix commit:")
 print(git.diff(fix_commit, fix_commit + "^"))
 printSeparator()
+print("git blame for the fix commit:")
 print(git.blame("-L 226,232", fix_commit, file_path + file_name))
 printSeparator()
+print("git blame for the commit before the fix commit:")
 vcc_info = git.blame("-L 226,232", fix_commit + "^", file_path + file_name)
 print(vcc_info)
 printSeparator()
@@ -38,19 +41,21 @@ print("Part 5 info:")
 for each_vcc in vcc:
 	print(each_vcc)
 	printSeparator()
+	print("git show for vcc: " + each_vcc)
 	print(git.show("--stat", each_vcc))
 	printSeparator()
 
-	git_log = git.log(file_path + file_name)
-	authors = {}
-	for log_line in git_log.splitlines():
-		log_info = log_line.split(" ", 1)
-		if(log_info[0] == "Author:"):
-			if(log_info[1] in authors):
-				authors[log_info[1]] += 1
-			else:
-				authors[log_info[1]] = 1
 
-	print("Commit(s) made per author:")
-	print(json.dumps(authors, indent=1))
+git_log = git.log(file_path + file_name)
+authors = {}
+for log_line in git_log.splitlines():
+	log_info = log_line.split(" ", 1)
+	if(log_info[0] == "Author:"):
+		if(log_info[1] in authors):
+			authors[log_info[1]] += 1
+		else:
+			authors[log_info[1]] = 1
+
+print("Commit(s) made per author on file: " + file_name)
+print(json.dumps(authors, indent=1))
 
